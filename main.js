@@ -56,38 +56,69 @@ const loadByBreed = async (breed) => {
 }
 
 const createSlideshow = (images) => {
+    const slideNumUsed = (num) => {
+        console.log(7)
+        if (slidesShown.length >= images.length) {
+            slidesShown = []
+        }
+        console.log(8)
+        if (slidesShown.includes(num))
+            return true
+        slidesShown.push(num)
+        console.log(9)
+        return false
+    }
+    
+    const getRandomSlideNum = (max) => {
+    console.log(5)
+        let num = Math.floor(Math.random() * max);
+    console.log(6)
+        while (slideNumUsed(num)) {
+            num = Math.floor(Math.random() * max);
+        }
+        return num
+    }
+
     const nextSlide = () => {
+        currentSlide = getRandomSlideNum(images.length)
         document.getElementById('slideshow').insertAdjacentHTML("beforeend", 
             `<div class="slide" style="background-image: url('${images[currentSlide]}')"></div>`)
         deleteFirstPhotoDelay = setTimeout(() => {
             // Remove the FIRST slide element found
             document.querySelector('.slide').remove()
         }, 1000)
-        if (currentSlide >= images.length-1) {
-            currentSlide = 0;
-        } else {
-            currentSlide++
-        }
     }
 
     let currentSlide = 0
+    let slidesShown = []
+
+    if (images.length <= 0) {
+        alert("No images found for this breed.")
+        return;
+    }
+
     if (timer != null)
         clearInterval(timer)
     if (deleteFirstPhotoDelay != null)
         clearTimeout(deleteFirstPhotoDelay)
 
-    if (images.length > 1) {
-        document.getElementById('slideshow').innerHTML = `
-            <div class="slide" style="background-image: url('${images[0]}')"></div>
-            <div class="slide" style="background-image: url('${images[1]}')"></div>`
-        currentSlide += 2
-        if (images.length == 2)
-            currentSlide = 0;
-        timer = setInterval(nextSlide, 5000)
-    } else {
+    if (images.length == 1) {
         document.getElementById('slideshow').innerHTML = `
             <div class="slide" style="background-image: url('${images[0]}')"></div>
             <div class="slide"></div>`
-    }  
-    
+    } else if (images.length == 2) {
+        slideNumUsed(0)
+        slideNumUsed(1)
+        document.getElementById('slideshow').innerHTML = `
+            <div class="slide" style="background-image: url('${images[0]}')"></div>
+            <div class="slide" style="background-image: url('${images[1]}')"></div>`
+        timer = setInterval(nextSlide, 5000)
+    } else {
+        slide1 = 
+        document.getElementById('slideshow').innerHTML = `
+            <div class="slide" style="background-image: url('${images[getRandomSlideNum(images.length)]}')"></div>
+            <div class="slide" style="background-image: url('${images[getRandomSlideNum(images.length)]}')"></div>`
+        timer = setInterval(nextSlide, 5000)
+    }
 }
+
